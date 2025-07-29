@@ -7,5 +7,5 @@ def load_data():
             yield {
                 "context": item["context"],
                 "claim": item["claim"],
-                "label": item.get("label", "")
+                "label": item.get("label""")
             }

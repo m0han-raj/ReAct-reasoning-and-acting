@@ -7,4 +7,5 @@ def load_data():
             yield{
                 "context": item["context"],
                 "question": item["question"],
-                "answer":item.get("answer","")            }
+                "answer":item.get("answer","")            
+            }
