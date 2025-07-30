@@ -1,8 +1,15 @@
-def get_prompt(context , question):
-    return f"""Answer the followuing questions based on the context :
+def get_prompt(context, question, history):
+    history_text = "\n".join(history)
+    return f"""Answer the following question using the ReAct framework. Format your response EXACTLY as shown:
 
-    Context: {context}
+Context: {context}
 
-    Question: {question}
+Question: {question}
 
-think step by step and provide a final answer"""
+{history_text}
+
+You MUST respond in this format:
+Thought [number]: [your reasoning]
+Act [number]: [Search/Lookup/Finish][query]
+Observation [number]: [result will be provided]
+"""
