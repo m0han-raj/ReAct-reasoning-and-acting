@@ -22,7 +22,7 @@ def evaluate_accuracy(log_file):
             print(f"Q: {question}")
             print(f"Gold: {gold}")
             print(f"Prediction: {pred}")
-            print(f"Correct: {'✅' if is_correct else '❌'}")
+            print(f"Correct: {'' if is_correct else '❌'}")
             print("-" * 60)
 
             total += 1
@@ -30,7 +30,7 @@ def evaluate_accuracy(log_file):
                 correct += 1
 
     accuracy = 100 * correct / total if total > 0 else 0.0
-    print(f"\n📊 Accuracy: {correct}/{total} = {accuracy:.2f}%")
+    print(f"\n Accuracy: {correct}/{total} = {accuracy:.2f}%")
     return accuracy
 
 
