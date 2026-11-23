@@ -1,5 +1,6 @@
-import os
 import json
+import os
+
 
 def log_result(env_name, data, result):
     log_path = f"data/logs/{env_name}_results.jsonl"
@@ -8,6 +9,6 @@ def log_result(env_name, data, result):
         log_entry = {
             "question": data["question"],
             "answer": data["answer"],
-            "response": result["response"]
+            "response": result["response"],
         }
         f.write(json.dumps(log_entry) + "\n")

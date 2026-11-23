@@ -1,8 +1,9 @@
-import os
-import requests
 import json
-from dotenv import load_dotenv
+import os
 from time import sleep
+
+import requests
+from dotenv import load_dotenv
 
 load_dotenv()
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
@@ -10,20 +11,21 @@ OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 if not OPENROUTER_API_KEY:
     raise ValueError("OPENROUTER_API_KEY not found in .env")
 
+
 def call_llm(prompt, max_retries=3):
     url = "https://openrouter.ai/api/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {OPENROUTER_API_KEY}",
         "Content-Type": "application/json",
         "HTTP-Referer": "https://github.com/your-repo",  # Required for free tier
-        "X-Title": "ReAct Agent"  # Required for free tier
+        "X-Title": "ReAct Agent",  # Required for free tier
     }
 
     payload = {
         "model": "qwen/qwen3-235b-a22b:free",  # More reliable than Qwen free
         "messages": [{"role": "user", "content": prompt}],
         "temperature": 0.7,
-        "max_tokens": 500
+        "max_tokens": 500,
     }
 
     for attempt in range(max_retries):

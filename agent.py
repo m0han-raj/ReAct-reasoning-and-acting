@@ -1,6 +1,7 @@
 from llm_interface import call_llm
 from prompts import get_prompt
 
+
 class ReActAgent:
     def __init__(self):
         self.steps = []
@@ -39,26 +40,25 @@ class ReActAgent:
         return self._format_final_output()
 
     def _update_history(self, step, thought, action, observation):
-        self.history.extend([
-            f"Thought {step}: {thought}",
-            f"Act {step}: {action}",
-            f"Obs {step}: {observation}"
-        ])
+        self.history.extend(
+            [
+                f"Thought {step}: {thought}",
+                f"Act {step}: {action}",
+                f"Obs {step}: {observation}",
+            ]
+        )
 
     def _format_final_output(self):
-        return "\n".join([
-            f"=== ReAct Trace ===",
-            *self.steps,
-            f"=== History ===",
-            *self.history
-        ])
+        return "\n".join(
+            [f"=== ReAct Trace ===", *self.steps, f"=== History ===", *self.history]
+        )
 
     def mock_observe(self, response):
         # Enhanced mock observations
         search_prefix = "Search["
         if search_prefix in response:
             query = response.split(search_prefix)[1].split("]")[0]
-            
+
             # Dataset-specific responses
             if "nationality" in query.lower():
                 return "Scott Derrickson is American. Ed Wood was American."
@@ -74,12 +74,12 @@ class ReActAgent:
     def parse_response(self, response):
         thought = action = ""
         lines = [line.strip() for line in response.split("\n") if line.strip()]
-        
+
         for line in lines:
             lower_line = line.lower()
             if lower_line.startswith("thought"):
                 thought = line.split(":", 1)[-1].strip()
             elif lower_line.startswith("act"):
                 action = line.split(":", 1)[-1].strip()
-        
+
         return thought or "No thought generated", action or "No action specified"
