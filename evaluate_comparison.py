@@ -1,6 +1,7 @@
 import json
 import os
 
+
 def evaluate_accuracy(log_file):
     if not os.path.exists(log_file):
         print(f"Log file not found: {log_file}")
@@ -10,8 +11,8 @@ def evaluate_accuracy(log_file):
     correct = 0
     print(f"\nEvaluating results from: {log_file}")
     print("-" * 60)
-    
-    with open(log_file, 'r', encoding='utf-8') as f:
+
+    with open(log_file, "r", encoding="utf-8") as f:
         for line in f:
             data = json.loads(line)
             question = data.get("question", "").strip()

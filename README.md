@@ -1,68 +1,90 @@
-# **ReAct** Synergizing-reasoning-and-acting-in-language-models
+# ReAct: Reasoning and Acting in Language Models
 
-A Python implementation of the **ReAct (Reasoning + Acting)** framework for question answering, supporting **HotpotQA** and **FEVER** datasets with the **claude-3-Haiku** Model
+A small Python implementation of the ReAct (Reasoning + Acting) prompting loop for question answering, with loaders for the HotpotQA and FEVER datasets.
 
-The ReAct stands for **_Reasoning and acting_** , is a groundbreaking framework designed for **LLM's (Large language models)** by interleaving thought process by external tool use
+## Overview
 
-## Table of Contents
+ReAct interleaves model reasoning ("thought") with tool use ("action") and the resulting "observation". This repository runs that thought-action-observation loop against an LLM served through the OpenRouter API and writes predictions per dataset to JSONL logs.
 
--   [Usage](#usage)
--   [Installation](#Installation)
--   [Configuration](#Configuration)
--   [outcomes](#Outcomes)
--   [Citation](#Citation)
--   [License](#license)
+![ReAct overview](assets/react.png)
 
-## Usage 
+## Features
 
-![react](data/images/react.png)
+- ReAct agent loop with a configurable step limit (`agent.py`, default 5 steps)
+- Prompt template enforcing the `Thought / Act / Observation` format (`prompts.py`)
+- OpenRouter chat-completions client with retries (`llm_interface.py`)
+- Dataset loaders for HotpotQA and FEVER (`environments/`)
+- Batch runner that saves predictions to `data/logs/*.jsonl` (`main.py`)
+- Simple accuracy script for scored logs (`evaluate_comparison.py`)
 
-ReAct uses external tools for up-to-date information and computations, reducing hallucinations and increasing accuracy . this iterative "thought-action-observation" cycle fosters transparent , adaptive , and reliable AI problem solving in real-world scenarios . 
+Note: the agent's `Search[...]` observations are currently mocked (`ReActAgent.mock_observe`), not retrieved from a real search tool.
 
-By enabling dynamic tool interaction, ReAct allows LLMs to overcome their inherent knowledge limitations and perform actions in the real world. This makes AI systems more capable for complex tasks like factual retrieval, real-time data analysis, and autonomous decision-making.
+## Project structure
 
-# Installation
- ## Quick Start
-### Prerequisites
-- Python 3.8+
-- OpenRouter API key (free tier available)
-### Installation
+```
+.
+├── agent.py                 # ReActAgent loop
+├── llm_interface.py         # OpenRouter API client
+├── prompts.py               # Prompt template
+├── main.py                  # Run the agent over HotpotQA and FEVER
+├── evaluate_comparison.py   # Accuracy over result logs
+├── utils.py
+├── environments/            # Dataset loaders (hotpotqa_env.py, fever_env.py)
+├── data/                    # hotpotqa.json, fever.json
+├── assets/                  # Images used in this README
+└── requirements.txt
+```
+
+## Setup
+
+Requires Python 3.8+ and an [OpenRouter](https://openrouter.ai) API key.
+
 ```bash
 git clone https://github.com/m0han-raj/ReAct-reasoning-and-acting.git
 cd ReAct-reasoning-and-acting
 pip install -r requirements.txt
 ```
 
-# Configuration
-```bash
-OPENROUTER_API_KEY=<YOUR_API_KEY>
+Create a `.env` file in the repository root:
+
 ```
-set the model you need in _**llm_interface.py**_
+OPENROUTER_API_KEY=<your_api_key>
+```
 
-# Outcomes
+The model is set in `llm_interface.py`.
 
-![outcomes](data/images/output.png)
+## Usage
 
-here the response of the LLM is in the format of **thought-reasoning-action**
+```bash
+python main.py
+```
 
-## Benchmark Results
+This runs the agent on samples from `data/hotpotqa.json` and `data/fever.json` and writes `data/logs/hotpotqa_results.jsonl` and `data/logs/fever_results.jsonl`.
 
-| Model              | HotpotQA (EM) | FEVER (EM) |
-|--------------------|--------------|------------|
-| Claude 3 Haiku     | 34.2         | 58.5       |
-| GPT-3              | 30.4         | 54.0       |
-| PaLM-540B          | 29.4         | 62.2       |
+## Example output
 
-*10-sample dev set, exact match (EM) metrics*
+The model responds in a thought / action format:
 
-# Citation
+![Example output](assets/output.png)
+
+## Tech stack
+
+Python, `requests`, `python-dotenv`, OpenRouter API.
+
+## References
+
+Yao, S., Zhao, J., Yu, D., Du, N., Shafran, I., Narasimhan, K., Cao, Y. "ReAct: Synergizing Reasoning and Acting in Language Models." ICLR 2023. https://arxiv.org/abs/2210.03629
 
 ```bibtex
 @inproceedings{yao2023react,
-  title = {{ReAct}: Synergizing Reasoning and Acting in Language Models},
-  author = {Yao, Shunyu and Zhao, Jeffrey and Yu, Dian and Du, Nan and Shafran, Izhak and Narasimhan, Karthik and Cao, Yuan},
-  booktitle = {International Conference on Learning Representations (ICLR) },
-  year = {2023},
-  html = {https://arxiv.org/abs/2210.03629},
+  title     = {{ReAct}: Synergizing Reasoning and Acting in Language Models},
+  author    = {Yao, Shunyu and Zhao, Jeffrey and Yu, Dian and Du, Nan and Shafran, Izhak and Narasimhan, Karthik and Cao, Yuan},
+  booktitle = {International Conference on Learning Representations (ICLR)},
+  year      = {2023},
+  url       = {https://arxiv.org/abs/2210.03629}
 }
 ```
+
+## License
+
+MIT. See [LICENSE](LICENSE).
